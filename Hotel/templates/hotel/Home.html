@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Home</title>
+   <link
+
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+
+   <!-- font awesome cdn link  -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+   {% load static %}
+   <!-- custom css file link  -->
+   <link rel="stylesheet" href="{% static 'styles.css' %}">
+
+</head>
+
+<body>
+
+   <!-- header section starts  -->
+
+   <section class="header">
+
+      <div class="flex">
+         <a href="#home" class="logo">Hotels And Resorts</a>
+         <a href="#availability" class="btn">check availability</a>
+         <div id="menu-btn" class="fas fa-bars"></div>
+      </div>
+
+      <nav class="navbar">
+         <a href="#home">home</a>
+         <a href="#about">about</a>
+         <a href="#reservation">reservation</a>
+         <a href="#gallery">gallery</a>
+         <a href="#contact">contact</a>
+         <a href="#reviews">reviews</a>
+         <a href="#bookings">my bookings</a>
+      </nav>
+
+   </section>
+
+   <!-- header section ends -->
+   <!-- home section starts  -->
+
+   <section class="home" id="home">
+
+      <div class="swiper home-slider">
+
+         <div class="swiper-wrapper">
+
+            <div class="box swiper-slide">
+               <img src="{% static 'images/home-img-2.jpg' %}" alt="">
+               <div class="flex">
+                  <h3>foods and drinks</h3>
+                  <a href="#reservation" class="btn">make a reservation</a>
+               </div>
+            </div>
+            <div class="box swiper-slide">
+               <img src="{% static 'images/home-img-1.jpg' %}" alt="">
+               <div class="flex">
+                  <h3>luxurious rooms</h3>
+                  <a href="#availability" class="btn">check availability</a>
+               </div>
+            </div>
+
+
+            <div class="box swiper-slide">
+               <img src="{% static 'images/home-img-3.jpg' %}" alt="">
+               <div class="flex">
+                  <h3>luxurious halls</h3>
+                  <a href="#contact" class="btn">contact us</a>
+               </div>
+            </div>
+
+         </div>
+
+         <div class="swiper-button-next"></div>
+         <div class="swiper-button-prev"></div>
+
+      </div>
+
+   </section>
+
+   <!-- home section ends -->
+
+   <!-- availability section starts  -->
+
+   <section class="availability" id="availability">
+
+      <form action="api/check_availability/" id="check_availability_form" method="post">
+         {% csrf_token %}
+         <div class="flex">
+            <div class="box">
+               <p>Check in <span>*</span></p>
+               <input type="date" name="check_in" class="input" required>
+            </div>
+            <div class="box">
+               <p>Check out <span>*</span></p>
+               <input type="date" name="check_out" class="input" required>
+            </div>
+            <div class="box">
+               <p>persons <span>*</span></p>
+               <select name="capacity" class="input" required>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+               </select>
+            </div>
+            <div class="box">
+               <p>Number of rooms <span>*</span></p>
+               <select name="rooms" class="input" required>
+                  <option value="1">1 room</option>
+                  <option value="2">2 rooms</option>
+                  <option value="3">3 rooms</option>
+                  <option value="4">4 rooms</option>
+                  <option value="5">5 rooms</option>
+               </select>
+            </div>
+         </div>
+         <input type="submit" value="check_availability" name="check" class="btn">
+      </form>
+
+      <div class="availableRooms">
+         <div class="header">
+            <h3>Available Rooms <span id ="number">({{ number }})</span></h3>
+            <div class="filter-buttons">
+               <button class="type all active" data-type="All">All</button>
+               <button class="type gold" data-type="Gold">Gold</button>
+               <button class="type silver" data-type="Silver">Silver</button>
+               <button class="type bronze" data-type="Bronze">Bronze</button>
+               <button class="refresh" id="refreshButton" onclick="getAvailableRooms()">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="size-6">
+                     <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  </svg>
+               </button>
+            </div>
+         </div>
+         <div class="x">
+            <ul class="room-list">
+               {% for room in rooms %}
+               <li class="room-item {{ room.room_type | lower}}" data-room-type="{{ room.room_type }}">
+                  <div class="room-info">
+                     <span class="room-number">Room <span class="room-num">{{ room.room_number }}</span></span>
+                     <span>(</span>
+                     <span class="rooms">{{ room.rooms }}</span>
+                     <span>-</span>
+                     <span class="capacity">{{ room.capacity }}</span>
+                     <span>)</span>
+                     <span class="room-type">{{ room.room_type }}</span><br>
+                     <span class="room-price">${{ room.price_per_day }}</span>
+                  </div>
+                  {% comment %} <a href="{% url 'book_room' room.id %}" class="book-button">Book Now</a> {% endcomment %}
+                  <a href="#reservation" class="book-button">Take Room</a>
+               </li>
+               {% endfor %}
+            </ul>
+            <div>
+            </div>
+
+
+   </section>
+   <hr>
+   <!-- availability section ends -->
+
+   <!-- about section starts  -->
+
+   <section class="about" id="about">
+
+      <div class="row">
+         <div class="image">
+            <img src="{% static 'images/about-img-1.jpg' %}" alt="">
+         </div>
+         <div class="content">
+            <h3>best staff</h3>
+            <p>Our staff is dedicated, friendly, and always ready to make your stay exceptional. With personalized service and attention to detail, they ensure every guest feels welcomed and cared for.</p>
+            <a href="#reservation" class="btn">make a reservation</a>
+         </div>
+      </div>
+
+      <div class="row revers">
+         <div class="image">
+            <img src="{% static 'images/about-img-2.jpg' %}" alt="">
+         </div>
+         <div class="content">
+            <h3>best foods</h3>
+            <p>Our hotel offers mouth-watering, freshly prepared meals, crafted with the finest ingredients to delight every palate. Each dish is a flavorful experience you won't forget!</p>
+            <a href="#contact" class="btn">contact us</a>
+         </div>
+      </div>
+
+      <div class="row">
+         <div class="image">
+            <img src="{% static 'images/about-img-3.jpg' %}" alt="">
+         </div>
+         <div class="content">
+            <h3>swimming pool</h3>
+            <p>Our hotel offers a sparkling, serene pool where you can unwind and enjoy a refreshing swim in a tranquil setting.</p>
+            <a href="#availability" class="btn">check availability</a>
+         </div>
+      </div>
+
+   </section>
+
+   <!-- about section ends -->
+
+   <!-- services section starts  -->
+
+   <section class="services">
+
+      <div class="box-container">
+
+         <div class="box">
+            <img src="{% static 'images/icon-1.png' %}" alt="">
+            <h3>food & drinks</h3>
+            <p>Savor exquisite dishes and refreshing drinks, each crafted with the finest ingredients to elevate your dining experience.</p>
+         </div>
+
+         <div class="box">
+            <img src="{% static 'images/icon-2.png' %}" alt="">
+            <h3>outdoor dining</h3>
+            <p>Enjoy outdoor dining surrounded by nature, where every dish is crafted with fresh ingredients, creating a delightful experience in a tranquil atmosphere</p>
+         </div>
+
+         <div class="box">
+            <img src="{% static 'images/icon-3.png' %}" alt="">
+            <h3>beach view</h3>
+            <p>Savor breathtaking beach views, where golden sands meet crystal-clear waters, providing a serene backdrop for relaxation and unforgettable moments</p>
+         </div>
+
+         <div class="box">
+            <img src="{% static 'images/icon-4.png' %}" alt="">
+            <h3>decorations</h3>
+            <p>Our decor blends elegance and warmth with stylish furnishings and vibrant art, creating an inviting atmosphere</p>
+         </div>
+
+         <div class="box">
+            <img src="{% static 'images/icon-5.png' %}" alt="">
+            <h3>swimming pool</h3>
+            <p>The inviting swimming pool boasts a sleek design, inviting guests to unwind amidst vibrant tropical landscaping</p>
+         </div>
+
+         <div class="box">
+            <img src="{% static 'images/icon-6.png' %}" alt="">
+            <h3>resort beach</h3>
+            <p>The resort beach presents a picturesque escape with golden sands and azure waters, ideal for both leisure and adventure</p>
+         </div>
+
+      </div>
+
+   </section>
+
+   <!-- services section ends -->
+
+   <!-- reservation section starts  -->
+
+   <section class="reservation" id="reservation">
+      <form action="" method="post" id="reservation_form">
+         {% csrf_token %}
+         <h3>Make a reservation</h3>
+         <div class="flex">
+             <div class="box">
+                 <p>Your name <span>*</span></p>
+                 <input type="text" name="name" maxlength="50" required placeholder="Enter your name" class="input">
+             </div>
+             <div class="box">
+                 <p>Your email <span>*</span></p>
+                 <input type="email" name="email" maxlength="50" required placeholder="Enter your email" class="input">
+             </div>
+             <div class="box">
+                 <p>Room Type <span>*</span></p>
+                 <select name="room_type" class="input" required>
+                     <option value="Gold">Gold</option>
+                     <option value="Silver">Silver</option>
+                     <option value="Bronze">Bronze</option>
+                 </select>
+             </div>
+             <div class="box">
+                 <p>Price <span>*</span></p>
+                 <input type="text" name="price" class="input" required>
+             </div>
+             <div class="box">
+                 <p>Persons <span>*</span></p>
+                 <select name="persons" class="input" required>
+                     <option value="1" selected>1 person</option>
+                     <option value="2">2</option>
+                     <option value="3">3</option>
+                     <option value="4">4</option>
+                     <option value="5">5</option>
+                     <option value="6">6</option>
+                 </select>
+             </div>
+             <div class="box">
+                 <p>Number of rooms <span>*</span></p>
+                 <select name="rooms" class="input" required>
+                     <option value="1" selected>1 room</option>
+                     <option value="2">2 rooms</option>
+                     <option value="3">3 rooms</option>
+                     <option value="4">4 rooms</option>
+                     <option value="5">5 rooms</option>
+                     <option value="6">6 rooms</option>
+                 </select>
+             </div>
+             <div class="box">
+                 <p>Check in <span>*</span></p>
+                 <input type="date" name="check_in" class="input" required>
+             </div>
+             <div class="box">
+                 <p>Check out <span>*</span></p>
+                 <input type="date" name="check_out" class="input" required>
+             </div>
+             <!-- Hidden input for room number -->
+             <input type="hidden" name="room_number" class="input">
+         </div>
+         <button type="submit" class="btn">Confirm Booking</button>
+     </form>
+     
+   </section>
+   
+
+   <!-- reservation section ends -->
+
+   <!-- bookings section starts  -->
+
+   <section class="grid">
+
+      <h1 class="heading">bookings</h1>
+
+      <div class="box-container">
+         <div class="box">
+            <p>booking id : <span>
+                  <?= $fetch_bookings['booking_id']; ?>
+               </span></p>
+            <p>name : <span>
+                  <?= $fetch_bookings['name']; ?>
+               </span></p>
+            <p>email : <span>
+                  <?= $fetch_bookings['email']; ?>
+               </span></p>
+            <p>number : <span>
+                  <?= $fetch_bookings['number']; ?>
+               </span></p>
+            <p>check in : <span>
+                  <?= $fetch_bookings['check_in']; ?>
+               </span></p>
+            <p>check out : <span>
+                  <?= $fetch_bookings['check_out']; ?>
+               </span></p>
+            <p>rooms : <span>
+                  <?= $fetch_bookings['rooms']; ?>
+               </span></p>
+            <p>adults : <span>
+                  <?= $fetch_bookings['adults']; ?>
+               </span></p>
+            <p>childs : <span>
+                  <?= $fetch_bookings['childs']; ?>
+               </span></p>
+            <form action="" method="POST">
+               <input type="hidden" name="delete_id" value="<?= $fetch_bookings['booking_id']; ?>">
+               <input type="submit" value="delete booking" onclick="return confirm('delete this booking?');"
+                  name="delete" class="btn">
+            </form>
+         </div>
+      </div>
+
+   </section>
+
+   <!-- bookings section ends -->
+
+   <!-- gallery section starts  -->
+
+   <section class="gallery" id="gallery">
+
+      <div class="swiper gallery-slider">
+         <div class="swiper-wrapper">
+            <img src="{% static 'images/gallery-img-1.jpg' %}" class="swiper-slide" alt="">
+            <img src="{% static 'images/gallery-img-2.jpg' %}" class="swiper-slide" alt="">
+            <img src="{% static 'images/gallery-img-3.jpg' %}" class="swiper-slide" alt="">
+            <img src="{% static 'images/gallery-img-4.jpg' %}" class="swiper-slide" alt="">
+            <img src="{% static 'images/gallery-img-5.jpg' %}" class="swiper-slide" alt="">
+            <img src="{% static 'images/gallery-img-6.jpg' %}" class="swiper-slide" alt="">
+         </div>
+         <div class="swiper-pagination"></div>
+      </div>
+
+   </section>
+
+   <!-- gallery section ends -->
+
+   <!-- contact section starts  -->
+
+   <section class="contact" id="contact">
+
+      <div class="row">
+
+         <form action="" method="post" id="message-form">
+            {% csrf_token %}
+            <h3>Send us a message</h3>
+            <input type="text" name="name" required maxlength="50" placeholder="Enter your name" class="box">
+            <input type="email" name="email" required maxlength="50" placeholder="Enter your email" class="box">
+            <textarea name="message" class="box" required maxlength="1000" placeholder="Enter your message" cols="30" rows="10"></textarea>
+            <input type="submit" value="Send Message" name="send" class="btn">
+        </form>
+
+         <div class="faq">
+         <h3 class="title">frequently asked questions</h3>
+         <div class="box active">
+            <h3>how to cancel?</h3>
+            <p>To cancel your reservation, log into your account, go to "My Reservations," select the booking, and click "Cancel Reservation."</p>
+         </div>
+         <div class="box">
+            <h3>is there any vacancy?</h3>
+            <p>Yes, we currently have vacancies available. Please let us know your desired dates, and we’ll assist you with the booking!</p>
+         </div>
+         <div class="box">
+            <h3>what are payment methods?</h3>
+            <p>We accept various payment methods, including credit and debit cards, PayPal, and bank transfers. Please choose the one that suits you best during checkout!</p>
+         </div>
+         </div>
+
+      </div>
+
+   </section>
+
+   <!-- contact section ends -->
+
+   <!-- reviews section starts  -->
+
+   <section class="reviews" id="reviews">
+
+      <div class="swiper reviews-slider">
+   
+         <div class="swiper-wrapper">
+            <div class="swiper-slide box">
+               <img src="{% static 'images/pic-1.png' %}" alt="">
+               <h3>Mr Handsome</h3>
+               <p>As a frequent traveler, I found the hotel management system exceptional. The booking process was seamless, and the staff was incredibly responsive. It made my stay enjoyable and hassle-free!</p>
+            </div>
+            <div class="swiper-slide box">
+               <img src="{% static 'images/pic-4.png' %}" alt="">
+               <h3>Barbra</h3>
+               <p>I was impressed with the efficiency of the hotel management system. The check-in and check-out processes were quick, and the room availability feature ensured I got the accommodation I wanted. Highly recommend!</p>
+            </div>
+            <div class="swiper-slide box">
+               <img src="{% static 'images/pic-3.png' %}" alt="">
+               <h3>Limo</h3>
+               <p>The hotel management system enhanced my experience significantly. I appreciated the clear communication and easy navigation. It truly made my stay more comfortable and enjoyable!</p>
+            </div>
+            
+         </div>
+   
+         <div class="swiper-pagination"></div>
+      </div>
+   
+   </section>
+
+   <!-- reviews section ends  -->
+
+   <!-- footer section starts  -->
+
+   <section class="footer">
+
+      <div class="box-container">
+   
+         <div class="box">
+            <a href="+254 793 566704"><i class="fas fa-phone"></i> +254 793 566704 </a>
+            <a href="+254 716 260730"><i class="fas fa-phone"></i> +254 716 260730 </a>
+            <a href="edwinmbai92@gmail.com"><i class="fas fa-envelope"></i> edwinmbai92@gmail.com</a>
+            <a href="mutaihillary391@gmail.com"><i class="fas fa-envelope"></i> mutaihillary391@gmail.com</a>
+            <a href="#"><i class="fas fa-map-marker-alt"></i> 1996-90100 Machakos, Kenya </a>
+         </div>
+   
+         <div class="box">
+            <a href="#home">home</a>
+            <a href="#about">about</a>
+            <a href="#bookings">my bookings</a>
+            <a href="#reservation">reservation</a>
+            <a href="/api/admin">admin</a>
+            <a href="#gallery">gallery</a>
+            <a href="#contact">contact</a>
+            <a href="#reviews">reviews</a>
+         </div>
+   
+         <div class="box">
+            <a href="#">facebook <i class="fab fa-facebook-f"></i></a>
+            <a href="#">twitter <i class="fab fa-twitter"></i></a>
+            <a href="#">instagram <i class="fab fa-instagram"></i></a>
+            <a href="#">youtube <i class="fab fa-youtube"></i></a>
+         </div>
+   
+      </div>
+   
+   
+   </section>
+
+   <!-- footer section ends -->
+
+   <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+   <!-- custom js file link  -->
+   <script src="{% static 'index.js' %}"></script>
+
+   <script>
+      let rooms = document.querySelectorAll('.room-item');
+      document.addEventListener('DOMContentLoaded', function () {
+         let buttons = document.querySelectorAll('.filter-buttons .type');
+         setUpButtons(buttons);
+      });
+
+      function setUpButtons(buttons) {
+         // Add click event to each button
+         buttons.forEach(button => {
+            button.addEventListener('click', function () {
+               // Remove 'active' class from all buttons
+               buttons.forEach(btn => btn.classList.remove('active'));
+
+               // Add 'active' class to the clicked button
+               this.classList.add('active');
+
+               // Get the room type from the button's data-type attribute
+               const selectedType = this.getAttribute('data-type');
+
+               // Filter rooms based on selected type
+               const x = document.querySelector('.x');
+               const number = x.querySelectorAll('.' + selectedType.toLowerCase()).length;
+               console.log(number, selectedType.toLowerCase());
+               const numberElement = document.getElementById('number');
+               numberElement.textContent = `(${number})`;
+               
+               rooms.forEach(room => {
+                  if (selectedType === 'All') {
+                     room.style.display = 'flex'; // Show all rooms
+                     numberElement.textContent = `({{ number }})`;
+                     return;
+                  }
+
+                  const roomType = room.getAttribute('data-room-type');
+                  if (roomType === selectedType) {
+                     room.style.display = 'flex'; // Show matching rooms
+                     if (selectedType === 'Gold') room.style.background = '#ffd700';
+                     if (selectedType === 'Silver') room.style.background = '#c0c0c0';
+                     if (selectedType === 'Bronze') room.style.background = '#cd7f32';
+                  } else {
+                     room.style.display = 'none'; // Hide non-matching rooms
+                  }
+               });
+               
+               
+            });
+         });
+      }
+
+      function updateRoomsList(data) {
+         const roomList = document.querySelector('.room-list');
+         roomList.innerHTML = ''; // Clear the room list
+   
+         data.forEach(room => {
+            const roomItem = `
+            <li class="room-item ${room.room_type.toLowerCase()}" data-room-type="${room.room_type}">
+             <div class="room-info">
+                 <span class="room-number">Room ${room.room_number}</span>
+                 <span>(</span>
+                 <span class="rooms">${ room.rooms }</span>
+                 <span>-</span>
+                 <span class="capacity">${ room.capacity }</span>
+                 <span>)</span>
+                 <span class="room-type">${room.room_type}</span><br>
+                 <span class="room-price">$${room.price_per_day}</span>
+             </div>
+             <a href="#reservation" class="book-button">Take Room</a>
+         </li>`;
+            roomList.innerHTML += roomItem;
+         });
+   
+         // After updating the room list, reinitialize room and button event listeners
+         rooms = document.querySelectorAll('.room-item');
+         let buttons = document.querySelectorAll('.filter-buttons .type');
+         setUpButtons(buttons); // Reattach button event listeners
+      }
+
+      function getAvailableRooms() {
+         let buttons = document.querySelectorAll('.filter-buttons .type');
+         const refreshButton = document.getElementById('refreshButton');
+         refreshButton.disabled = true;  // Disable the button during fetch
+         document.getElementById('number').textContent = `({{ number }})`;
+
+         fetch('api/available-rooms',
+            {
+               method: 'GET',
+               headers: {
+                  'Content-Type': 'application/json',
+               },
+            })
+            .then(response => response.json())
+            .then(data => {
+               const roomList = document.querySelector('.room-list');
+               roomList.innerHTML = '';
+
+               data.rooms.forEach(room => {
+                  const roomItem = `
+                  <li class="room-item ${room.room_type.toLowerCase()}" data-room-type="${room.room_type}">
+             <div class="room-info">
+                 <span class="room-number">Room ${room.room_number}</span>
+                 <span class="room-type">${room.room_type}</span><br>
+                 <span class="room-price">$${room.price_per_day}</span>
+             </div>
+             <a href="#reservation" class="book-button">Take Room</a>
+         </li>`;
+
+                  roomList.innerHTML += roomItem;
+               });
+
+               refreshButton.disabled = false;  // Re-enable the button after fetch
+               refreshButton.classList.remove('active');
+               refreshButton.parentElement.querySelectorAll('.type').forEach((btn) => {
+                  if (btn.classList.contains('active')) {
+                     btn.classList.remove('active');
+                  }
+                  if (btn.classList.contains('all')) {
+                     btn.classList.add('active');
+                  }
+               });
+            })
+            .catch(error => {
+               console.error('Error fetching rooms:', error);
+               refreshButton.disabled = false;  // Re-enable the button in case of error
+            });
+         setUpButtons(buttons);
+      }
+
+      document.querySelector('#check_availability_form').addEventListener('submit', function (e) {
+         e.preventDefault(); // Prevent form submission
+   
+         const formData = new FormData(this);
+         fetch('/api/check_availability/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+               'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+         })
+            .then(response => response.json())
+            .then(data => {
+               console.log(data["available_rooms"])
+               updateRoomsList(data["available_rooms"]); // Update the room list after availability check
+            })
+            .catch(error => console.error('Error:', error));
+      });
+
+   document.querySelectorAll('.book-button').forEach(button => {
+      button.addEventListener('click', function (event) {
+         event.preventDefault();
+   
+         // Scroll to the reservation form
+         const res = document.getElementById('reservation');
+         res.scrollIntoView({ behavior: 'smooth' });
+   
+         // Get the parent room-item element of the clicked button
+         const roomItem = this.closest('.room-item');
+   
+         // Extract room details from the selected room-item
+         const roomNumber = roomItem.querySelector('.room-num').innerText;  // Updated to match class name
+         const roomType = roomItem.querySelector('.room-type').innerText.trim();
+         const roomPrice = roomItem.querySelector('.room-price').innerText.replace('$', '');
+         const rooms = roomItem.querySelector('.rooms').innerText.trim();
+         const capacity = roomItem.querySelector('.capacity').innerText.trim();
+   
+         // Set the values in the reservation form
+         res.querySelector('select[name="room_type"]').value = roomType; // Set the room type
+         res.querySelector('select[name="persons"]').value = capacity; // Set the number of room occupants
+         res.querySelector('select[name="rooms"]').value = rooms; // Set the number of rooms
+         res.querySelector('input[name="price"]').value = roomPrice; // Set the room price
+         res.querySelector('input[name="room_number"]').value = roomNumber; // Add this line to set room number
+   
+         res.querySelector('input[name="name"]').focus();  // Focus the first input field for better UX
+         
+         // Add the submit event listener outside of the button click handler to avoid adding multiple listeners
+         document.getElementById('reservation_form').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the form from submitting in the default way
+   
+            const reservationData = {
+               name: res.querySelector('input[name="name"]').value,
+               email: res.querySelector('input[name="email"]').value,
+               room_type: res.querySelector('select[name="room_type"]').value,
+               persons: res.querySelector('select[name="persons"]').value,
+               rooms: res.querySelector('select[name="rooms"]').value,
+               check_in: res.querySelector('input[name="check_in"]').value,
+               check_out: res.querySelector('input[name="check_out"]').value,
+               price: res.querySelector('input[name="price"]').value,
+               room_number: roomNumber  // Extract room number from selected room-item
+            };
+   
+            fetch('/api/book-room/', {
+               method: 'POST',
+               body: JSON.stringify(reservationData),
+               headers: {
+                  'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                  'Content-Type': 'application/json'  // Set content type to JSON
+               }
+            })
+            .then(response => response.json())
+            .then(data => {
+               if (data.error) {
+                  alert(data.error);
+               } else {
+                  alert(`Booking successful for Room ${data.room_number}! Total price: $${data.total_price}`);
+               }
+            })
+            .catch(error => console.error('Error:', error));
+         });
+      });
+   });
+   
+   document.getElementById('message-form').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent default form submission
+
+      // Create a FormData object to send the form data
+      const formData = new FormData(this);
+
+      // Send the data using Fetch API
+      fetch('{% url "send_message" %}', {
+          method: 'POST',
+          body: formData,
+          headers: {
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value // CSRF token for Django
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              alert(data.message); // Show success message
+              document.getElementById('message-form').reset(); // Reset the form
+          } else {
+              alert('An error occurred while sending the message.');
+          }
+      })
+      .catch(error => console.error('Error:', error));
+  });
+   
+   </script>
+
+
+</body>
+
+</html>

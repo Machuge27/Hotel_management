@@ -1,0 +1,67 @@
+/* General body styles */
+body {
+    font-family: pt mono;
+    background-color: #f7f7f7; /* Light background color */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center the form horizontally */
+    align-items: center; /* Center the form vertically */
+    height: 100vh; /* Full viewport height */
+}
+
+/* Styling the Sign-Up heading */
+h2 {
+    text-align: center;
+    color: #333; /* Dark grey */
+    font-size: 2em;
+    margin: 20px;
+}
+
+/* Form container */
+form {
+    background-color: #fff; /* White background for the form */
+    padding: 20px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    width: 100%;
+    max-width: 400px; /* Limit the max width */
+}
+
+/* Styling for form fields */
+form input, form select, form textarea {
+    width: 100%; /* Full width */
+    padding: 10px;
+    margin: 10px 0; /* Space between fields */
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px; /* Rounded corners for inputs */
+    box-sizing: border-box;
+}
+
+/* Submit button styles */
+button[type="submit"] {
+    width: 100%; /* Full width */
+    background-color: #4CAF50; /* Green button */
+    color: white;
+    padding: 10px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 4px; /* Slightly rounded */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover */
+}
+
+/* Hover effect for the submit button */
+button[type="submit"]:hover {
+    background-color: #45a049; /* Darker green when hovering */
+}
+
+/* CSRF token input (hidden field) */
+input[name="csrfmiddlewaretoken"] {
+    display: none; /* Hide it */
+}
+
+.helptext, li {
+    display: none;
+}

@@ -1,0 +1,7 @@
+<h2>Book Room {{ room.room_number }}</h2>
+<form method="post">
+    {% csrf_token %}
+    Check-in: <input type="datetime-local" name="check_in"><br>
+    Check-out: <input type="datetime-local" name="check_out"><br>
+    <button type="submit">Confirm Booking</button>
+</form>

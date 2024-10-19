@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'admin.css'%}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Admin Dashboard</h1>
+        <div class="card-container">
+            <div class="summary-card">
+                <h3>Total Rooms</h3>
+                <div class="value">{{ total_rooms }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Available Rooms</h3>
+                <div class="value">{{ available_rooms }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Bookings</h3>
+                <div class="value">{{ total_bookings }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Revenue</h3>
+                <div class="value">${{ total_revenue }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Guests</h3>
+                <div class="value">{{ total_guests }}</div>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Message</th>
+                    <th>Received At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for message in messages %}
+                    <tr>
+                        <td>{{ message.name }}</td>
+                        <td>{{ message.email }}</td>
+                        <td>{{ message.message }}</td>
+                        <td>{{ message.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
