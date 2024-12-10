@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .search-header {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .search-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .search-form input,
+        .search-form select,
+        .search-form button {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .search-form input,
+        .search-form select {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-form button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-form button:hover {
+            background-color: #2980b9;
+        }
+
+        .hotels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .hotel-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .hotel-card:hover {
+            transform: scale(1.05);
+        }
+
+        .hotel-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .hotel-details {
+            padding: 15px;
+        }
+
+        .hotel-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .hotel-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .hotel-rating {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .hotel-price {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-form input,
+            .search-form select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-header">
+            <h1 class="search-title">Find Your Perfect Hotel</h1>
+            <form class="search-form" id="hotelSearchForm">
+                <input type="text" id="locationInput" placeholder="Enter Location" required>
+                <input type="date" id="checkInDate" required>
+                <input type="date" id="checkOutDate" required>
+                <select id="guestsSelect">
+                    <option value="1">1 Guest</option>
+                    <option value="2">2 Guests</option>
+                    <option value="3">3 Guests</option>
+                    <option value="4">4 Guests</option>
+                    <option value="5">5 Guests</option>
+                </select>
+                <button type="submit">Search Hotels</button>
+            </form>
+        </div>
+
+        <div id="hotelsContainer" class="hotels-grid">
+            <!-- Hotel cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        // Sample hotel data (in a real application, this would come from a backend API)
+        const sampleHotels = [
+            {
+                name: "Luxury Sunset Resort",
+                location: "New York",
+                rating: 4.8,
+                price: "$250/night",
+                image: "https://images.unsplash.com/photo-1564501049412-4c88a1b8b8ed"
+            },
+            {
+                name: "City View Hotel",
+                location: "New York",
+                rating: 4.5,
+                price: "$180/night",
+                image: "https://images.unsplash.com/photo-1484101403633-471b3429f231"
+            },
+            {
+                name: "Riverside Inn",
+                location: "New York",
+                rating: 4.2,
+                price: "$150/night",
+                image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d"
+            },
+            {
+                name: "Mountain Breeze Lodge",
+                location: "California",
+                rating: 4.6,
+                price: "$220/night",
+                image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5e3"
+            }
+        ];
+
+        document.getElementById('hotelSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const location = document.getElementById('locationInput').value.trim();
+            const checkIn = document.getElementById('checkInDate').value;
+            const checkOut = document.getElementById('checkOutDate').value;
+            const guests = document.getElementById('guestsSelect').value;
+
+            const hotelsContainer = document.getElementById('hotelsContainer');
+            hotelsContainer.innerHTML = ''; // Clear previous results
+
+            // Filter hotels by location (in a real app, this would be an API call)
+            const filteredHotels = sampleHotels.filter(hotel => 
+                hotel.location.toLowerCase().includes(location.toLowerCase())
+            );
+
+            if (filteredHotels.length === 0) {
+                hotelsContainer.innerHTML = `
+                    <div class="no-results">
+                        <h2>No hotels found in ${location}

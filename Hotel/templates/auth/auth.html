@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auth</title>
+    <link rel="styleSheet" type="" href="/Hotel/static/auth.css" />
+    <link rel="styleSheet" type="" href="/static/auth.css" />
+  </head>
+
+  <body>
+    <h2>Sign Up</h2>
+    <div class="form">
+      <p>
+        <label for="id_username">Username:</label>
+        <input
+          type="text"
+          name="username"
+          maxlength="150"
+          autocapitalize="none"
+          autocomplete="username"
+          autofocus
+          required
+          aria-describedby="id_username_helptext"
+          id="id_username"
+        />
+      </p>
+
+      <p>
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          name="email"
+          autocomplete="email"
+          id="email"
+          required
+        />
+      </p>
+
+      <p>
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          name="password"
+          autocomplete="password"
+          required
+          id="password"
+        />
+      </p>
+
+      <button type="submit" id="submitSignupData">Sign Up</button>
+      <div class="options">
+        <p class="option2">
+          Already have an account?
+          <a href="/signin">Sign In!</a>
+        </p>
+      </div>
+    </div>
+    <script>
+        const username = document.getElementById('id_username');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const subBtn = document.getElementById('submitSignupData');
+        console.log("Text");
+        subBtn.addEventListener('click', () => {
+        fetch('http://192.168.100.38:8081/signup/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username.value,
+                email: email.value,
+                password: password.value,
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+      </script>
+  </body>
+</html>

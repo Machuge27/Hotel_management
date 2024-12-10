@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auth</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'auth.css' %}" />
+  </head>
+
+  <body>
+    <div class="message"></div>
+    <h2>Sign In</h2>
+    <form class="form">
+      {% csrf_token %}
+      <p>
+        <label for="id_username">Username or email:</label>
+        <input
+          type="text"
+          name="username"
+          maxlength="150"
+          autocapitalize="none"
+          autocomplete="username"
+          autofocus
+          required
+          id="id_username"
+        />
+      </p>
+
+      <p>
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+          id="password"
+        />
+      </p>
+
+      <button type="submit" class="sub">Sign In</button>
+      <div class="options">
+        <p class="option2">
+          Don't have an account?
+          <a href="http://127.0.0.1:8000/auth/signup">Sign Up!</a>
+        </p>
+      </div>
+    </form>
+    <script>
+      document.querySelector(".sub").addEventListener("click", async function (event) {
+        event.preventDefault();
+    
+        const username = document.getElementById("id_username").value;
+        const password = document.getElementById("password").value;
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const errorBox = document.querySelector(".message");
+    
+        if (!username || !password) {
+            errorBox.innerText = "Please fill in all fields.";
+            errorBox.style.color = "red";
+            return;
+        }
+    
+        try {
+            const response = await fetch("/api/token/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken,
+                },
+                body: JSON.stringify({ username, password }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.ok) {
+                // Save tokens in localStorage
+                localStorage.setItem("access", data.access);
+                localStorage.setItem("refresh", data.refresh);
+    
+                // Use the access token to authenticate the request to room_listing
+                const roomResponse = await fetch("http://127.0.0.1:8000/room_listing/", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${data.access}`,
+                    },
+                });
+    
+                if (roomResponse.ok) {
+                  window.location.href = "http://127.0.0.1:8000/room_listing/"; // Adjust the URL as needed
+                } else {
+                    const roomError = await roomResponse.json();
+                    errorBox.innerText = roomError.detail || "Error accessing room listing.";
+                    errorBox.style.color = "red";
+                }
+            } else {
+                errorBox.innerText = data.error || "Invalid credentials.";
+                errorBox.style.color = "red";
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            errorBox.innerText = "Something went wrong. Please try again.";
+            errorBox.style.color = "red";
+        }
+    });
+    
+    </script>
+  </body>
+</html>

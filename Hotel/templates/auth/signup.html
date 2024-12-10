@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -14,10 +14,95 @@
     {{ form.as_p }}
     <button type="submit">Sign Up</button>
     <div class="options">
-      <p>Don't have an account?
-        <a href="/signin">Create one!</a>
+      <p>Already have an account?
+        <a href="/signin">log in!</a>
       </p>
     </div>
 </form>
 </body>
+</html> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auth</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'auth.css' %}" />
+  </head>
+
+  <body>
+    <h2>Sign Up</h2>
+    <div class="form">
+      <p>
+        <label for="id_username">Username:</label>
+        <input
+          type="text"
+          name="username"
+          maxlength="150"
+          autocapitalize="none"
+          autocomplete="username"
+          autofocus
+          required
+          id="id_username"
+        />
+      </p>
+
+      <p>
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          name="email"
+          autocomplete="email"
+          id="email"
+          required
+        />
+      </p>
+
+      <p>
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          name="password"
+          autocomplete="password"
+          required
+          id="password"
+        />
+      </p>
+
+      <button type="submit" class="sub">Sign Up</button>
+      <div class="options">
+        <p class="option2">
+          Already have an account?
+          <a href="http://127.0.0.1:8000/auth/signin">Sign In!</a>
+        </p>
+      </div>
+    </div>
+    <script>
+        document.querySelector('.sub').addEventListener('click', signUp);
+        async function signUp() {
+          const email = document.getElementById('email').value;
+          const username = document.getElementById("id_username").value;
+          const password = document.getElementById("password").value;
+          console.log(email);
+  
+          if (!username || !password) {
+            alert("Please fill in all fields");
+            return;
+          }
+          const response = await fetch("http://127.0.0.1:8000/auth/signup/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+              email: email,
+              password: password,
+            }),
+          });
+      }
+    </script>
+  </body>
 </html>
